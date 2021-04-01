@@ -87,9 +87,14 @@ function normalizeComponent(template, style, script, scopeId, isFunctionalTempla
 const __vue_script__$1 = script$1;
 /* template */
 
-var __vue_render__$1 = function (_h, _vm) {
-  var _c = _vm._c;
-  return _c('vuepify-internal-layout-head', [_vm._t("default")], 2);
+var __vue_render__$1 = function () {
+  var _vm = this;
+
+  var _h = _vm.$createElement;
+
+  var _c = _vm._self._c || _h;
+
+  return _vm.$vuepifySSR.isSSR ? _c('vuepify-internal-layout-head', [_vm._t("default")], 2) : _vm._e();
 };
 
 var __vue_staticRenderFns__$1 = [];
@@ -104,7 +109,7 @@ const __vue_scope_id__$1 = undefined;
 const __vue_module_identifier__$1 = undefined;
 /* functional template */
 
-const __vue_is_functional_template__$1 = true;
+const __vue_is_functional_template__$1 = false;
 /* style inject */
 
 /* style inject SSR */
@@ -120,6 +125,7 @@ const __vue_component__$1 = /*#__PURE__*/normalizeComponent({
 //
 //
 //
+//
 var script = {
   name: "vuepify-layout-content"
 };
@@ -128,9 +134,14 @@ var script = {
 const __vue_script__ = script;
 /* template */
 
-var __vue_render__ = function (_h, _vm) {
-  var _c = _vm._c;
-  return _c('vuepify-internal-layout-content');
+var __vue_render__ = function () {
+  var _vm = this;
+
+  var _h = _vm.$createElement;
+
+  var _c = _vm._self._c || _h;
+
+  return _vm.$vuepifySSR.isSSR ? _c('vuepify-internal-layout-content') : _c('div', [_vm._v("runtime content")]);
 };
 
 var __vue_staticRenderFns__ = [];
@@ -145,7 +156,7 @@ const __vue_scope_id__ = undefined;
 const __vue_module_identifier__ = undefined;
 /* functional template */
 
-const __vue_is_functional_template__ = true;
+const __vue_is_functional_template__ = false;
 /* style inject */
 
 /* style inject SSR */
@@ -160,6 +171,11 @@ const __vue_component__ = /*#__PURE__*/normalizeComponent({
 const components = [__vue_component__$1, __vue_component__];
 function VuepifyPlugin(Vue) {
   components.forEach(Component => Vue.component(Component.name, Component));
+  Object.defineProperty(Vue.prototype, '$vuepifySSR', {
+    get: () => window.VUEPIFY_SSR || {
+      isSSR: false
+    }
+  });
 }
 
 export { VuepifyPlugin };

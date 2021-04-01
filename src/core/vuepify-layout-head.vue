@@ -1,5 +1,5 @@
-<template functional>
-  <vuepify-internal-layout-head>
+<template>
+  <vuepify-internal-layout-head v-if="$vuepifySSR.isSSR">
     <slot/>
   </vuepify-internal-layout-head>
 </template>

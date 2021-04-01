@@ -8,4 +8,7 @@ const components = [
 
 export function VuepifyPlugin(Vue) {
     components.forEach(Component => Vue.component(Component.name, Component));
+    Object.defineProperty(Vue.prototype, '$vuepifySSR', {
+        get: () => window.VUEPIFY_SSR || { isSSR: false }
+    });
 }
