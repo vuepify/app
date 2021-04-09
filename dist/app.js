@@ -5,7 +5,8 @@
 //
 //
 var script$1 = {
-  name: "vuepify-layout-head"
+  name: "vuepify-layout-head",
+  inject: ['vuepify']
 };
 
 function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier /* server only */, shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
@@ -94,7 +95,7 @@ var __vue_render__$1 = function () {
 
   var _c = _vm._self._c || _h;
 
-  return _vm.$vuepifySSR.isSSR ? _c('vuepify-internal-layout-head', [_vm._t("default")], 2) : _vm._e();
+  return _vm.vuepify.isSSR ? _c('vuepify-internal-layout-head', [_vm._t("default")], 2) : _vm._e();
 };
 
 var __vue_staticRenderFns__$1 = [];
@@ -127,7 +128,8 @@ const __vue_component__$1 = /*#__PURE__*/normalizeComponent({
 //
 //
 var script = {
-  name: "vuepify-layout-content"
+  name: "vuepify-layout-content",
+  inject: ['vuepify']
 };
 
 /* script */
@@ -141,7 +143,7 @@ var __vue_render__ = function () {
 
   var _c = _vm._self._c || _h;
 
-  return _vm.$vuepifySSR.isSSR ? _c('vuepify-internal-layout-content') : _c('div', [_vm._v("runtime content")]);
+  return _vm.vuepify.isSSR ? _c('vuepify-internal-layout-content') : _c('div', [_vm._v("runtime content")]);
 };
 
 var __vue_staticRenderFns__ = [];
@@ -171,11 +173,6 @@ const __vue_component__ = /*#__PURE__*/normalizeComponent({
 const components = [__vue_component__$1, __vue_component__];
 function VuepifyPlugin(Vue) {
   components.forEach(Component => Vue.component(Component.name, Component));
-  Object.defineProperty(Vue.prototype, '$vuepifySSR', {
-    get: () => window.VUEPIFY_SSR || {
-      isSSR: false
-    }
-  });
 }
 
 export { VuepifyPlugin };

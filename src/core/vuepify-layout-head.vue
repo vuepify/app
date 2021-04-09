@@ -1,11 +1,12 @@
 <template>
-  <vuepify-internal-layout-head v-if="$vuepifySSR.isSSR">
+  <vuepify-internal-layout-head v-if="vuepify.isSSR">
     <slot/>
   </vuepify-internal-layout-head>
 </template>
 
 <script>
 export default {
-  name: "vuepify-layout-head"
+  name: "vuepify-layout-head",
+  inject: ['vuepify']
 }
 </script>
