@@ -2,23 +2,19 @@
   "name": "app",
   "version": "1.0.0",
   "description": "",
-
   "main": "dist/app.js",
-
   "files": [
     "dist/*",
     "src/**/*.vue"
   ],
   "sideEffects": false,
-
   "scripts": {
     "build": "cross-env NODE_ENV=production rollup --config build/rollup.config.js",
     "watch": "cross-env NODE_ENV=production rollup --watch --config build/rollup.config.js"
   },
-
   "dependencies": {
+    "vue-meta": "^2.4.0"
   },
-
   "devDependencies": {
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",

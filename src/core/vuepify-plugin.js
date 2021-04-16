@@ -1,11 +1,10 @@
-import VuepifyLayoutHead from "./vuepify-layout-head";
-import VuepifyLayoutContent from './vuepify-layout-content';
+import VueMeta from 'vue-meta';
+import { VuepifyLayoutContent } from './components/layout';
 
-const components = [
-    VuepifyLayoutHead,
-    VuepifyLayoutContent
-]
+const components = [VuepifyLayoutContent];
 
 export function VuepifyPlugin(Vue) {
+    Vue.use(VueMeta);
+
     components.forEach(Component => Vue.component(Component.name, Component));
 }
