@@ -2245,7 +2245,9 @@ var __vue_render__ = function () {
       name: "vuepify-internal-hidden",
       rawName: "v-vuepify-internal-hidden"
     }]
-  })], 1) : _c('div', [_vm._v("runtime content")]);
+  })], 1) : _c('div', [_c(_vm.vuepify.EntityApp, {
+    tag: "component"
+  })], 1);
 };
 
 var __vue_staticRenderFns__ = [];

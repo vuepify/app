@@ -2,7 +2,7 @@
   <div v-if="vuepify.isSSR">
     <vuepify-internal-layout-content v-vuepify-internal-hidden />
   </div>
-  <div v-else>runtime content</div>
+  <div v-else><component :is="vuepify.EntityApp" /></div>
 </template>
 
 <script>
