@@ -2140,18 +2140,29 @@ var index = {
   hasMetaInfo: hasMetaInfo
 };
 
-function vuepifyInternalHidden(targetEl) {
-  targetEl.ariaHidden = 'true';
-  targetEl.style.display = 'none!important';
-}
-
 //
-var script = {
+//
+//
+//
+//
+//
+var script$1 = {
   name: "vuepify-layout-content",
-  directives: {
-    vuepifyInternalHidden
-  },
-  inject: ['vuepify']
+  computed: {
+    childAttrs() {
+      if (this.$vuepify.isSSR) {
+        return {
+          is: 'div',
+          'data-vuepify-layout-content': ''
+        };
+      }
+
+      return {
+        is: this.$vuepify.EntityApp
+      };
+    }
+
+  }
 };
 
 function normalizeComponent(template, style, script, scopeId, isFunctionalTemplate, moduleIdentifier /* server only */, shadowMode, createInjector, createInjectorSSR, createInjectorShadow) {
@@ -2230,6 +2241,58 @@ function normalizeComponent(template, style, script, scopeId, isFunctionalTempla
 }
 
 /* script */
+const __vue_script__$1 = script$1;
+/* template */
+
+var __vue_render__$1 = function () {
+  var _vm = this;
+
+  var _h = _vm.$createElement;
+
+  var _c = _vm._self._c || _h;
+
+  return _c('div', [_c('component', _vm._b({}, 'component', _vm.childAttrs, false))], 1);
+};
+
+var __vue_staticRenderFns__$1 = [];
+/* style */
+
+const __vue_inject_styles__$1 = undefined;
+/* scoped */
+
+const __vue_scope_id__$1 = undefined;
+/* module identifier */
+
+const __vue_module_identifier__$1 = undefined;
+/* functional template */
+
+const __vue_is_functional_template__$1 = false;
+/* style inject */
+
+/* style inject SSR */
+
+/* style inject shadow dom */
+
+const __vue_component__$1 = /*#__PURE__*/normalizeComponent({
+  render: __vue_render__$1,
+  staticRenderFns: __vue_staticRenderFns__$1
+}, __vue_inject_styles__$1, __vue_script__$1, __vue_scope_id__$1, __vue_is_functional_template__$1, __vue_module_identifier__$1, false, undefined, undefined, undefined);
+
+//
+//
+//
+//
+var script = {
+  name: "vuepify-liquid",
+  props: {
+    expression: {
+      type: String,
+      required: true
+    }
+  }
+};
+
+/* script */
 const __vue_script__ = script;
 /* template */
 
@@ -2240,13 +2303,10 @@ var __vue_render__ = function () {
 
   var _c = _vm._self._c || _h;
 
-  return _vm.vuepify.isSSR ? _c('div', [_c('vuepify-internal-layout-content', {
-    directives: [{
-      name: "vuepify-internal-hidden",
-      rawName: "v-vuepify-internal-hidden"
-    }]
-  })], 1) : _c(_vm.vuepify.EntityApp, {
-    tag: "component"
+  return _c('span', {
+    domProps: {
+      "innerHTML": _vm._s(_vm.$vuepify.injectLiquidExpression(_vm.expression))
+    }
   });
 };
 
@@ -2274,10 +2334,150 @@ const __vue_component__ = /*#__PURE__*/normalizeComponent({
   staticRenderFns: __vue_staticRenderFns__
 }, __vue_inject_styles__, __vue_script__, __vue_scope_id__, __vue_is_functional_template__, __vue_module_identifier__, false, undefined, undefined, undefined);
 
-const components = [__vue_component__];
-function VuepifyPlugin(Vue) {
-  Vue.use(index);
-  components.forEach(Component => Vue.component(Component.name, Component));
+class DataServerHash {
+  encode(string) {
+    return Buffer.from(string).toString('base64');
+  }
+
+  decode(hash) {
+    return Buffer.from(hash, 'base64').toString('utf8');
+  }
+
+}
+class DataBrowserHash {
+  encode(string) {
+    return btoa(string);
+  }
+
+  decode(hash) {
+    return atob(hash);
+  }
+
+}
+
+class VuepifyApp {
+  constructor({
+    isSSR
+  }, {
+    dataHash
+  }) {
+    this.isSSR = isSSR;
+    this.dataHash = dataHash;
+    this.rootVue = null;
+    this.shopifyData = {};
+    this._liquidCache = new Map();
+  }
+
+  setRootVue(vue) {
+    this.rootVue = vue;
+  }
+
+  injectLiquidExpression(expression) {
+    if (!this._liquidCache.has(expression)) {
+      this._liquidCache.set(expression, this.processLiquidExpression(expression));
+    }
+
+    return this._liquidCache.get(expression);
+  }
+
+  processLiquidExpression(expression) {
+    return expression;
+  }
+
+}
+
+class VuepifyServerApp extends VuepifyApp {
+  constructor(options) {
+    super(options, {
+      dataHash: new DataServerHash()
+    });
+  }
+
+  buildHeadTags() {
+    const {
+      title,
+      meta
+    } = this.rootVue.$meta().inject();
+    return title.text() + meta.text();
+  }
+
+  processLiquidExpression(expression) {
+    const key = this.dataHash.encode(expression);
+    this.shopifyData[key] = `{{ ${expression} }}`;
+    return this.shopifyData[key];
+  }
+
+}
+
+class VuepifyBrowserApp extends VuepifyApp {
+  constructor(options) {
+    super(options, {
+      dataHash: new DataBrowserHash()
+    });
+    this.EntityApp = options.EntityApp;
+    this.loadShopifyData();
+  }
+
+  loadShopifyData() {
+    function fetchData(variation) {
+      const dataEl = document.querySelector(`[data-vuepify-shopify-data="${variation}"]`);
+      const data = JSON.parse(dataEl.innerText);
+      dataEl.remove();
+      return data;
+    }
+
+    this.shopifyData = Object.assign(fetchData('layout'), fetchData('content'));
+  }
+
+  processLiquidExpression(expression) {
+    const key = this.dataHash.encode(expression);
+    return this.shopifyData[key];
+  }
+
+}
+
+function createVuepifyApp(options) {
+  return options.isSSR ? new VuepifyServerApp(options) : new VuepifyBrowserApp(options);
+}
+
+class VuepifyPlugin {
+  static install(Vue, options) {
+    new VuepifyPlugin(Vue, options);
+  }
+  /**
+   * @typedef VuepifyOptions
+   * @property {Boolean} isSSR
+   * @property {ComponentOptions} EntityApp
+   *
+   * @param Vue {VueConstructor}
+   * @param options {VuepifyOptions}
+   */
+
+
+  constructor(Vue, options) {
+    this._options = options;
+    this._Vue = Vue;
+
+    this._loadDependencies();
+
+    this._loadComponents();
+
+    this._loadApp();
+  }
+
+  _loadDependencies() {
+    this._Vue.use(index);
+  }
+
+  _loadComponents() {
+    const components = [__vue_component__$1, __vue_component__];
+    components.forEach(Component => this._Vue.component(Component.name, Component));
+  }
+
+  _loadApp() {
+    this._Vue.prototype.$vuepify = createVuepifyApp(this._options);
+  }
+
 }
 
 export { VuepifyPlugin };

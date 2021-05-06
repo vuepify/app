@@ -1,18 +1,20 @@
 <template>
-  <div v-if="vuepify.isSSR">
-    <vuepify-internal-layout-content v-vuepify-internal-hidden />
+  <div>
+    <component v-bind="childAttrs" />
   </div>
-  <component :is="vuepify.EntityApp" v-else />
 </template>
 
 <script>
-import {vuepifyInternalHidden} from '../../directives';
-
 export default {
   name: "vuepify-layout-content",
-  directives: {
-    vuepifyInternalHidden
-  },
-  inject: ['vuepify']
+
+  computed: {
+    childAttrs() {
+      if (this.$vuepify.isSSR) {
+        return { is: 'div', 'data-vuepify-layout-content': '' };
+      }
+      return { is: this.$vuepify.EntityApp }
+    }
+  }
 }
 </script>
