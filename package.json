@@ -13,6 +13,7 @@
     "watch": "cross-env NODE_ENV=production rollup --watch --config build/rollup.config.js"
   },
   "dependencies": {
+    "rollup-plugin-terser": "^7.0.2",
     "vue-meta": "^2.4.0"
   },
   "devDependencies": {

@@ -34,11 +34,10 @@ export class VuepifyPlugin {
 
     _loadApp() {
         const app = createVuepifyApp(this._options);
-        Object.defineProperty(this._Vue.prototype, {
+        Object.defineProperty(this._Vue.prototype, '$vuepify', {
             get: () => app,
             enumerable: true,
-            configurable: false,
-            writable: false
+            configurable: false
         });
     }
 }
