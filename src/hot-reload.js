@@ -9,7 +9,7 @@ const api = new Api(new ApiUrls(port));
     if (version < actualVersion) return reloadPage();
 
     await api.listenLiveReload(() => reloadPage());
-    console.log('[Vuepify] Waiting for reload signal from service…')
+    console.log('%c[Vuepify]', 'color: #0069c0', ' Waiting for reload signal from service…')
 
     VUEPIFY.isHotReloadReady = true;
     document.dispatchEvent(new CustomEvent('vuepifyHotReloadReady'));

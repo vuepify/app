@@ -9,8 +9,8 @@
   ],
   "sideEffects": false,
   "scripts": {
-    "build": "cross-env NODE_ENV=production rollup --config build/rollup.config.js",
-    "watch": "cross-env NODE_ENV=production rollup --watch --config build/rollup.config.js"
+    "build": "rollup --config build/rollup.config.js",
+    "watch": "rollup --watch --config build/rollup.config.js"
   },
   "dependencies": {
     "rollup-plugin-terser": "^7.0.2",
