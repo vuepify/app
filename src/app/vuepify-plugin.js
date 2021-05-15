@@ -1,6 +1,7 @@
 import VueMeta from 'vue-meta';
-import {VuepifyLayoutContent, VuepifyLiquid} from './components';
+import {VuepifyLayoutContent} from './components';
 import {createVuepifyApp} from "./app";
+import {defineGetter, pipe} from "./helpers";
 
 export class VuepifyPlugin {
     static install(Vue, options) {
@@ -17,27 +18,22 @@ export class VuepifyPlugin {
      */
     constructor(Vue, options) {
         this._options = options;
-        this._Vue = Vue;
-        this._loadDependencies();
-        this._loadComponents();
-        this._loadApp();
+
+        pipe(Vue, [
+            Vue => Vue.use(VueMeta),
+            this._loadApp.bind(this),
+            Vue => Vue.mixin(this._app.liquid.createLocalMixin()),
+            Vue => Vue.component(VuepifyLayoutContent.name, VuepifyLayoutContent)
+        ]);
     }
 
-    _loadDependencies() {
-        this._Vue.use(VueMeta);
-    }
-
-    _loadComponents() {
-        const components = [VuepifyLayoutContent, VuepifyLiquid]
-        components.forEach(Component => this._Vue.component(Component.name, Component));
-    }
-
-    _loadApp() {
-        const app = createVuepifyApp(this._options);
-        Object.defineProperty(this._Vue.prototype, '$vuepify', {
-            get: () => app,
-            enumerable: true,
-            configurable: false
+    _loadApp(Vue) {
+        this._app = createVuepifyApp(this._options);
+        defineGetter({
+            object: Vue.prototype,
+            name: '$vuepify',
+            value: this._app
         });
+        return Vue;
     }
 }
